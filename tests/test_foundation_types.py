@@ -1,6 +1,6 @@
 from motorch.exceptions import (
-    DTypeError,
     DeviceError,
+    DTypeError,
     MoTorchError,
     ShapeError,
     TensorValidationError,
