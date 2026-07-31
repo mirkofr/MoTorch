@@ -20,7 +20,9 @@ def test_validate_shape_returns_original_tensor() -> None:
 
 def test_validate_shape_error_is_informative() -> None:
     tensor = torch.zeros(2, 3)
-    with pytest.raises(ShapeError, match=r"test_module.*train_x.*3 dimensions.*\(2, 3\)"):
+    with pytest.raises(
+        ShapeError, match=r"test_module.*train_x.*3 dimensions.*\(2, 3\)"
+    ):
         validate_shape(tensor, name="train_x", module="test_module", ndim=3)
 
 
