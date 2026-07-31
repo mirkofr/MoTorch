@@ -1,0 +1,45 @@
+name: Feature request
+description: Propose a focused mathematical or engineering capability.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Explain the research or engineering need.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Proposed behavior and API
+      description: Describe inputs, outputs, tensor shapes, and expected failure modes.
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification plan
+      description: Describe unit, numerical, gradient, statistical, or benchmark evidence.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope exclusions and alternatives
+      description: State what should not be included and alternatives considered.
+  - type: textarea
+    id: references
+    attributes:
+      label: Public references
+      description: Link to papers or public technical documentation where relevant.
+  - type: checkboxes
+    id: claims
+    attributes:
+      label: Checklist
+      options:
+        - label: I am not making unverified performance or compatibility claims.
+          required: true
+        - label: Any proposed third-party code reuse will receive a license review.
+          required: true

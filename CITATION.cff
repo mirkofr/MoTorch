@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "Please cite the MoTorch software repository when using this project."
+title: "MoTorch"
+type: software
+version: 0.0.1
+license: MIT
+repository-code: "https://github.com/mirkofr/MoTorch"
+url: "https://github.com/mirkofr/MoTorch"
