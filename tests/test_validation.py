@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from motorch.exceptions import DTypeError, TensorValidationError
+from motorch.exceptions import DTypeError, DeviceError, TensorValidationError
 from motorch.utils.validation import validate_same_dtype_device, validate_tensor
 
 
@@ -34,7 +34,5 @@ def test_validate_same_dtype_device_rejects_device_mismatch() -> None:
         "x": torch.ones(2, device="cpu"),
         "y": torch.empty(2, device="meta"),
     }
-    from motorch.exceptions import DeviceError
-
     with pytest.raises(DeviceError, match=r"y.*cpu.*x.*meta"):
         validate_same_dtype_device(tensors, module="test")
