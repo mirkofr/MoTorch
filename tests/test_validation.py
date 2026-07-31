@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from motorch.exceptions import DTypeError, DeviceError, TensorValidationError
+from motorch.exceptions import DeviceError, DTypeError, TensorValidationError
 from motorch.utils.validation import validate_same_dtype_device, validate_tensor
 
 
