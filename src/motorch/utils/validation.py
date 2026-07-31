@@ -4,7 +4,7 @@ from collections.abc import Mapping
 
 import torch
 
-from motorch.exceptions import DTypeError, DeviceError, TensorValidationError
+from motorch.exceptions import DeviceError, DTypeError, TensorValidationError
 
 
 def validate_tensor(
