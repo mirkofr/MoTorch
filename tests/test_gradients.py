@@ -1,5 +1,3 @@
-import torch
-
 from motorch.utils.shapes import validate_shape
 from motorch.utils.testing import assert_finite_gradients, make_test_tensor
 from motorch.utils.validation import validate_tensor
