@@ -2,7 +2,7 @@
 
 MoTorch is an early-stage, low-level, modular, tensor-native optimization research library intended for PyTorch-based Bayesian optimization and scientific optimization research.
 
-> **Development status:** Pre-alpha. The repository currently contains only the project foundation and a minimal importable package. No Gaussian-process models, posteriors, acquisition functions, samplers, or candidate-optimization algorithms are implemented yet.
+> **Development status:** Pre-alpha. The repository contains tensor and validation foundations only. No Gaussian-process models, posteriors, acquisition functions, samplers, or candidate-optimization algorithms are implemented yet.
 
 ## Scope
 
@@ -35,10 +35,15 @@ python -m pip install .
 ## Current usage
 
 ```python
-import motorch
+import torch
 
-print(motorch.__version__)
+from motorch.utils import validate_shape
+
+x = torch.rand(4, 2, dtype=torch.double)
+validate_shape(x, name="x", module="example", trailing_shape=(2,))
 ```
+
+See [the tensor conventions](docs/tensor_conventions.md) for the current public contracts.
 
 ## Development setup
 
