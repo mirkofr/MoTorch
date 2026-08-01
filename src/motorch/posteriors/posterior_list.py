@@ -36,7 +36,10 @@ class PosteriorList:
     @property
     def mean(self) -> torch.Tensor:
         """Concatenate component means along the output dimension."""
-        return torch.cat([posterior.mean for posterior in self._posteriors], dim=-1)
+        return torch.cat(
+            [posterior.mean for posterior in self._posteriors],
+            dim=-1,
+        )
 
     @property
     def variance(self) -> torch.Tensor:
@@ -49,7 +52,7 @@ class PosteriorList:
     @property
     def batch_shape(self) -> torch.Size:
         """Return shared leading batch dimensions."""
-        return self.mean.shape[:-2]
+        return self._posteriors[0].mean.shape[:-2]
 
     @property
     def event_shape(self) -> torch.Size:
@@ -60,6 +63,16 @@ class PosteriorList:
     def base_sample_shape(self) -> torch.Size:
         """Return required non-sample dimensions for combined base samples."""
         return self.mean.shape
+
+    @property
+    def dtype(self) -> torch.dtype:
+        """Return the shared component dtype."""
+        return self._posteriors[0].mean.dtype
+
+    @property
+    def device(self) -> torch.device:
+        """Return the shared component device."""
+        return self._posteriors[0].mean.device
 
     def rsample(
         self,
@@ -87,7 +100,9 @@ class PosteriorList:
                     f"{tuple(expected_shape)}, but received "
                     f"{tuple(base_samples.shape)}."
                 )
-            output_sizes = [posterior.mean.shape[-1] for posterior in self._posteriors]
+            output_sizes = [
+                posterior.mean.shape[-1] for posterior in self._posteriors
+            ]
             component_base_samples = base_samples.split(output_sizes, dim=-1)
             samples = [
                 posterior.rsample(sample_shape, base_samples=component_base)
@@ -110,7 +125,11 @@ class PosteriorList:
         for index, posterior in enumerate(self._posteriors):
             mean = posterior.mean
             variance = posterior.variance
-            validate_tensor(mean, name=f"posterior[{index}].mean", module="PosteriorList")
+            validate_tensor(
+                mean,
+                name=f"posterior[{index}].mean",
+                module="PosteriorList",
+            )
             validate_tensor(
                 variance,
                 name=f"posterior[{index}].variance",
