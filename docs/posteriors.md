@@ -37,8 +37,9 @@ Implementations do not need to inherit from a common concrete base class when th
 
 `GaussianPosterior` stores an explicit mean and full covariance matrix. It validates:
 
-- floating-point and finite tensors;
+- finite tensors using `torch.float32` or `torch.float64`;
 - matching dtype and device;
+- positive candidate and output dimensions;
 - mean and covariance shapes;
 - covariance symmetry;
 - positive-semidefinite covariance.
