@@ -2,7 +2,7 @@
 
 MoTorch is an early-stage, low-level, modular, tensor-native optimization research library intended for PyTorch-based Bayesian optimization and scientific optimization research.
 
-> **Development status:** Pre-alpha. The repository contains tensor-validation foundations and the first posterior abstractions. No Gaussian-process models, samplers, acquisition functions, or candidate-optimization algorithms are implemented yet.
+> **Development status:** Pre-alpha. The repository contains tensor foundations, posterior abstractions, and the first exact Gaussian-process models. Samplers, acquisition functions, fitting orchestration, and candidate optimization are not implemented yet.
 
 ## Scope
 
@@ -28,9 +28,12 @@ The implemented foundation currently includes:
 - a structural `Posterior` protocol;
 - a dense, batched `GaussianPosterior` with differentiable reparameterized sampling;
 - deterministic caller-supplied base samples;
-- `PosteriorList` composition for independent output groups.
+- `PosteriorList` composition for independent output groups;
+- an abstract `Model` contract;
+- exact `SingleTaskGP` and `FixedNoiseGP` models;
+- `ModelList` composition for independent model groups.
 
-Future, separately implemented and tested layers are expected to include models, samplers, objectives, acquisition functions, and candidate optimization.
+Future, separately implemented and tested layers are expected to include fitting utilities, samplers, objectives, acquisition functions, and candidate optimization.
 
 ## Installation from source
 
@@ -45,20 +48,24 @@ python -m pip install .
 ```python
 import torch
 
-from motorch.posteriors import GaussianPosterior
+from motorch.models import SingleTaskGP
 
-mean = torch.zeros(2, 1, dtype=torch.double)
-covariance = torch.eye(2, dtype=torch.double)
-posterior = GaussianPosterior(mean, covariance)
+train_X = torch.linspace(0.0, 1.0, 8, dtype=torch.double).unsqueeze(-1)
+train_Y = torch.sin(train_X * 6.0)
+model = SingleTaskGP(train_X, train_Y)
 
-base_samples = torch.randn(8, 2, 1, dtype=torch.double)
-samples = posterior.rsample(
-    torch.Size([8]),
-    base_samples=base_samples,
-)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.05)
+for _ in range(25):
+    optimizer.zero_grad()
+    loss = model.training_loss()
+    loss.backward()
+    optimizer.step()
+
+X = torch.tensor([[0.25], [0.75]], dtype=torch.double)
+posterior = model.posterior(X)
 ```
 
-See [the tensor conventions](docs/tensor_conventions.md) and [posterior documentation](docs/posteriors.md) for the current public contracts.
+See [the tensor conventions](docs/tensor_conventions.md), [posterior documentation](docs/posteriors.md), and [model documentation](docs/models.md) for the current public contracts.
 
 ## Development setup
 
@@ -90,4 +97,4 @@ MoTorch is available under the [MIT License](LICENSE).
 
 ## Independence
 
-MoTorch is an independent open-source project. It is not affiliated with, endorsed by, or maintained by the PyTorch or BoTorch project teams.
+MoTorch is an independent open-source project. It is not affiliated with, endorsed by, or maintained by the PyTorch, GPyTorch, or BoTorch project teams.
