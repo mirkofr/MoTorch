@@ -22,8 +22,8 @@ def test_gaussian_posterior_sample_moments_match_analytic_moments() -> None:
     ).reshape(80_000, 2)
     empirical_mean = samples.mean(dim=0)
     centered = samples - empirical_mean
-    empirical_covariance = centered.transpose(-1, -2) @ centered / (
-        samples.shape[0] - 1
+    empirical_covariance = (
+        centered.transpose(-1, -2) @ centered / (samples.shape[0] - 1)
     )
 
     assert torch.allclose(empirical_mean, mean.reshape(-1), atol=0.015, rtol=0.0)
@@ -44,10 +44,14 @@ def test_gaussian_posterior_rsample_propagates_mean_and_covariance_gradients() -
         dtype=torch.double,
     )
 
-    loss = posterior.rsample(
-        torch.Size([2]),
-        base_samples=base_samples,
-    ).square().sum()
+    loss = (
+        posterior.rsample(
+            torch.Size([2]),
+            base_samples=base_samples,
+        )
+        .square()
+        .sum()
+    )
     loss.backward()
 
     assert mean.grad is not None
