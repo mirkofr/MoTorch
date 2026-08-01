@@ -23,21 +23,6 @@ class Posterior(Protocol):
         """Return the analytic marginal posterior variance."""
         ...
 
-    @property
-    def base_sample_shape(self) -> torch.Size:
-        """Return non-sample dimensions required by reparameterized samples."""
-        ...
-
-    @property
-    def dtype(self) -> torch.dtype:
-        """Return the posterior sample dtype."""
-        ...
-
-    @property
-    def device(self) -> torch.device:
-        """Return the posterior sample device."""
-        ...
-
     def rsample(
         self,
         sample_shape: torch.Size = torch.Size(),
