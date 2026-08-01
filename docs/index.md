@@ -6,7 +6,7 @@ MoTorch aims to provide low-level, modular, tensor-native building blocks for Ba
 
 ## Status
 
-MoTorch is pre-alpha. Phase 1 provides shared tensor foundations, Phase 2 adds posterior abstractions, Phase 3 introduces trainable exact Gaussian-process models, and Phase 4 adds reliable model-fitting orchestration.
+MoTorch is pre-alpha. Phase 1 provides shared tensor foundations, Phase 2 adds posterior abstractions, Phase 3 introduces trainable exact Gaussian-process models, Phase 4 adds reliable model-fitting orchestration, and Phase 5 adds differentiable posterior samplers.
 
 ## Intended architecture
 
@@ -30,13 +30,17 @@ The architecture separates models, posteriors, fitting, samplers, objectives, ac
 - Adam and L-BFGS fitting with state restoration, retries, and bounded jitter escalation.
 - Recoverable fitting and numerical warnings.
 - Deterministic fitting test mode that restores caller state.
+- Stateful posterior sampler contract with reusable cached base samples.
+- IID standard-normal posterior sampling with local seeded generators.
+- Scrambled Sobol QMC normal posterior sampling.
 
 ## Current limitations
 
-- There are no sampler, objective, acquisition, or candidate-optimization APIs.
+- There are no objective, acquisition, or candidate-optimization APIs.
 - Exact GP training scales cubically with observation count.
 - Dense posterior covariance storage is not intended for large structured problems.
 - Joint `ModelList` fitting is not implemented.
+- Antithetic and specialized batch-collapsing samplers are not implemented.
 - CUDA behavior is not yet exercised by dedicated CI jobs.
 - Compatibility with other optimization libraries is not claimed.
 
@@ -46,7 +50,8 @@ The architecture separates models, posteriors, fitting, samplers, objectives, ac
 - [Posterior abstractions](posteriors.md)
 - [Model abstractions](models.md)
 - [Model fitting](fitting.md)
+- [Posterior sampling](sampling.md)
 
 ## Next planned work
 
-The next phase is posterior sampling, including IID normal sampling, Sobol quasi-Monte Carlo normal sampling, base-sample caching, reproducibility, statistical tests, and gradient verification.
+The next phase is analytic acquisition functions, beginning with posterior mean, probability of improvement, expected improvement, and upper confidence bound, with independent value and gradient references.
