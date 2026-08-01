@@ -69,9 +69,7 @@ def test_single_task_gp_training_loss_is_differentiable() -> None:
     assert gradients
     assert all(gradient is not None for gradient in gradients)
     assert all(
-        torch.isfinite(gradient).all()
-        for gradient in gradients
-        if gradient is not None
+        torch.isfinite(gradient).all() for gradient in gradients if gradient is not None
     )
 
 
