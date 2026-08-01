@@ -2,7 +2,7 @@
 
 MoTorch is an early-stage, low-level, modular, tensor-native optimization research library intended for PyTorch-based Bayesian optimization and scientific optimization research.
 
-> **Development status:** Pre-alpha. The repository contains tensor and validation foundations only. No Gaussian-process models, posteriors, acquisition functions, samplers, or candidate-optimization algorithms are implemented yet.
+> **Development status:** Pre-alpha. The repository contains tensor-validation foundations and the first posterior abstractions. No Gaussian-process models, samplers, acquisition functions, or candidate-optimization algorithms are implemented yet.
 
 ## Scope
 
@@ -11,7 +11,7 @@ MoTorch is intended to provide:
 - modular optimization research components;
 - PyTorch-native tensor operations;
 - differentiable optimization components where mathematically appropriate;
-- future Bayesian optimization abstractions.
+- Bayesian optimization abstractions developed in independently tested layers.
 
 MoTorch is explicitly **not**:
 
@@ -20,9 +20,17 @@ MoTorch is explicitly **not**:
 - an experiment database;
 - an LLM assistant.
 
-## Planned architecture
+## Current architecture
 
-Future, separately implemented and tested layers are expected to include models, posteriors, samplers, objectives, acquisition functions, and candidate optimization. These names describe the planned architecture, not currently available functionality.
+The implemented foundation currently includes:
+
+- shared tensor shape, dtype, device, finite-value, gradient, and randomness conventions;
+- a structural `Posterior` protocol;
+- a dense, batched `GaussianPosterior` with differentiable reparameterized sampling;
+- deterministic caller-supplied base samples;
+- `PosteriorList` composition for independent output groups.
+
+Future, separately implemented and tested layers are expected to include models, samplers, objectives, acquisition functions, and candidate optimization.
 
 ## Installation from source
 
@@ -37,13 +45,20 @@ python -m pip install .
 ```python
 import torch
 
-from motorch.utils import validate_shape
+from motorch.posteriors import GaussianPosterior
 
-x = torch.rand(4, 2, dtype=torch.double)
-validate_shape(x, name="x", module="example", trailing_shape=(2,))
+mean = torch.zeros(2, 1, dtype=torch.double)
+covariance = torch.eye(2, dtype=torch.double)
+posterior = GaussianPosterior(mean, covariance)
+
+base_samples = torch.randn(8, 2, 1, dtype=torch.double)
+samples = posterior.rsample(
+    torch.Size([8]),
+    base_samples=base_samples,
+)
 ```
 
-See [the tensor conventions](docs/tensor_conventions.md) for the current public contracts.
+See [the tensor conventions](docs/tensor_conventions.md) and [posterior documentation](docs/posteriors.md) for the current public contracts.
 
 ## Development setup
 
