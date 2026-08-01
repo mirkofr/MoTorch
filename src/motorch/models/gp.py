@@ -1,7 +1,7 @@
 """Exact Gaussian-process model implementations."""
 
 from abc import abstractmethod
-from typing import cast
+from typing import Any, cast
 
 import torch
 from gpytorch.distributions import MultivariateNormal
@@ -21,8 +21,6 @@ from motorch.utils import (
     validate_training_shapes,
 )
 
-Likelihood = GaussianLikelihood | FixedNoiseGaussianLikelihood
-
 
 class _ExactGPBackend(ExactGP):
     """Internal batched exact GP with a constant mean and ARD RBF kernel."""
@@ -31,7 +29,7 @@ class _ExactGPBackend(ExactGP):
         self,
         train_X: torch.Tensor,
         train_Y: torch.Tensor,
-        likelihood: Likelihood,
+        likelihood: Any,
     ) -> None:
         super().__init__(train_X, train_Y, likelihood)
         batch_shape = torch.Size(train_X.shape[:-2])
@@ -97,9 +95,9 @@ class _BaseExactGP(Model):
         return self._training_batch_shape
 
     @property
-    def likelihood(self) -> Likelihood:
+    def likelihood(self) -> Any:
         """Return the GPyTorch likelihood used by the exact GP."""
-        return cast(Likelihood, self._gp.likelihood)
+        return self._gp.likelihood
 
     @property
     def train_X(self) -> torch.Tensor:
@@ -158,8 +156,8 @@ class _BaseExactGP(Model):
         try:
             latent = self._gp(backend_X)
             predictive = self.likelihood(latent) if observation_noise else latent
-            mean = predictive.mean.movedim(-2, -1)
-            covariance_by_output = predictive.covariance_matrix
+            mean = cast(torch.Tensor, predictive.mean).movedim(-2, -1)
+            covariance_by_output = cast(torch.Tensor, predictive.covariance_matrix)
         finally:
             self.train(was_training)
 
@@ -173,7 +171,7 @@ class _BaseExactGP(Model):
         backend_train_X: torch.Tensor,
         backend_train_Y: torch.Tensor,
         backend_noise: torch.Tensor | None,
-    ) -> Likelihood:
+    ) -> Any:
         """Construct the model likelihood."""
 
     @classmethod
@@ -257,7 +255,10 @@ class _BaseExactGP(Model):
         module: str,
     ) -> torch.Size:
         try:
-            return torch.broadcast_shapes(self.batch_shape, X.shape[:-2])
+            return cast(
+                torch.Size,
+                torch.broadcast_shapes(self.batch_shape, X.shape[:-2]),
+            )
         except RuntimeError as error:
             raise ShapeError(
                 f"{module}: expected candidate batch shape {tuple(X.shape[:-2])} "
@@ -291,9 +292,10 @@ class _BaseExactGP(Model):
             covariance_by_output,
             identity,
         )
-        return cast(
-            torch.Tensor,
-            covariance.reshape(*covariance_by_output.shape[:-3], q * num_outputs, -1),
+        return covariance.reshape(
+            *covariance_by_output.shape[:-3],
+            q * num_outputs,
+            -1,
         )
 
 
@@ -312,7 +314,7 @@ class SingleTaskGP(_BaseExactGP):
         backend_train_X: torch.Tensor,
         backend_train_Y: torch.Tensor,
         backend_noise: torch.Tensor | None,
-    ) -> Likelihood:
+    ) -> Any:
         del backend_train_Y, backend_noise
         return GaussianLikelihood(batch_shape=torch.Size(backend_train_X.shape[:-2]))
 
@@ -339,7 +341,7 @@ class FixedNoiseGP(_BaseExactGP):
         backend_train_X: torch.Tensor,
         backend_train_Y: torch.Tensor,
         backend_noise: torch.Tensor | None,
-    ) -> Likelihood:
+    ) -> Any:
         del backend_train_X, backend_train_Y
         if backend_noise is None:
             raise RuntimeError("FixedNoiseGP requires backend observation noise.")
