@@ -11,3 +11,7 @@ class NumericalWarning(MoTorchWarning):
 
 class OptimizationWarning(MoTorchWarning):
     """Warn about recoverable candidate-optimization failures."""
+
+
+class FittingWarning(MoTorchWarning):
+    """Warn about recoverable model-fitting retries or non-convergence."""
