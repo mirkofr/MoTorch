@@ -33,9 +33,7 @@ def test_fixed_noise_gp_training_loss_is_finite_and_differentiable() -> None:
     gradients = [parameter.grad for parameter in model.parameters()]
     assert all(gradient is not None for gradient in gradients)
     assert all(
-        torch.isfinite(gradient).all()
-        for gradient in gradients
-        if gradient is not None
+        torch.isfinite(gradient).all() for gradient in gradients if gradient is not None
     )
 
 
