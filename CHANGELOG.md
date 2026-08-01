@@ -4,6 +4,12 @@ All notable changes to MoTorch will be documented in this file.
 
 ## Unreleased
 
+- Added typed exact-GP fitting configuration and structured convergence diagnostics.
+- Added Adam and L-BFGS marginal-likelihood fitting with best-state restoration.
+- Added bounded retry, learning-rate reduction, and Cholesky-jitter escalation behavior.
+- Added recoverable fitting and numerical warnings plus deterministic fitting test mode.
+- Added reference fitting, failure-path, reproducibility, and configuration tests.
+- Added public model-fitting documentation.
 - Added the Phase 3 model contract, exact `SingleTaskGP`, `FixedNoiseGP`, and model-list abstraction.
 - Added differentiable exact marginal-likelihood training objectives and posterior construction.
 - Added GPyTorch and LinearOperator as GP runtime dependencies.
