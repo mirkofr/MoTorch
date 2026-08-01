@@ -1,5 +1,7 @@
 """Tensor-native multivariate Gaussian posterior implementation."""
 
+from typing import cast
+
 import torch
 
 from motorch.exceptions import DTypeError, ShapeError, TensorValidationError
@@ -179,7 +181,8 @@ class GaussianPosterior:
     def _covariance_root(self) -> torch.Tensor:
         eigenvalues, eigenvectors = torch.linalg.eigh(self._covariance_matrix)
         nonnegative_eigenvalues = eigenvalues.clamp_min(0.0)
-        return eigenvectors * nonnegative_eigenvalues.sqrt().unsqueeze(-2)
+        root = eigenvectors * nonnegative_eigenvalues.sqrt().unsqueeze(-2)
+        return cast(torch.Tensor, root)
 
     @staticmethod
     def _symmetry_rtol(dtype: torch.dtype) -> float:
