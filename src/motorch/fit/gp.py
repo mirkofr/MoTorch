@@ -149,7 +149,8 @@ def _attempt_fit(
                     closure_loss.backward()
                     return closure_loss
 
-                loss = cast(torch.Tensor, optimizer.step(closure))
+                lbfgs = cast(torch.optim.LBFGS, optimizer)
+                loss = cast(torch.Tensor, lbfgs.step(closure))
                 optimizer.zero_grad(set_to_none=True)
                 loss = _evaluate_loss(model)
                 loss.backward()
