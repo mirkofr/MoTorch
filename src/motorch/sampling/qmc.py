@@ -30,7 +30,7 @@ class SobolQMCNormalSampler(PosteriorSampler):
             scramble=True,
             seed=self.seed,
         )
-        uniforms = cast(torch.Tensor, engine.draw(sample_count, dtype=dtype))
+        uniforms = engine.draw(sample_count, dtype=dtype)
         epsilon = torch.finfo(dtype).eps
         uniforms = uniforms.clamp(min=epsilon, max=1.0 - epsilon)
         normals = torch.special.ndtri(uniforms)
