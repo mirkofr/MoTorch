@@ -63,7 +63,6 @@ src = ["src", "tests"]
 select = ["E4", "E7", "E9", "F", "I", "UP"]
 
 [tool.mypy]
-python_version = "3.10"
 strict = true
 files = ["src"]
 pretty = true
