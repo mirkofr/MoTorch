@@ -5,9 +5,7 @@ from motorch.posteriors import GaussianPosterior, PosteriorList
 from motorch.sampling import IIDNormalSampler, SobolQMCNormalSampler
 
 
-def _unit_posterior(
-    *, dtype: torch.dtype = torch.double
-) -> GaussianPosterior:
+def _unit_posterior(*, dtype: torch.dtype = torch.double) -> GaussianPosterior:
     return GaussianPosterior(
         torch.zeros(2, 1, dtype=dtype),
         torch.eye(2, dtype=dtype),
