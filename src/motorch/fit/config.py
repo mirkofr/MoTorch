@@ -48,21 +48,27 @@ class FitOptions:
         }
         for name, value in positive.items():
             if value <= 0:
-                raise ValueError(f"FitOptions.{name} must be positive, received {value}.")
+                raise ValueError(
+                    f"FitOptions.{name} must be positive, received {value}."
+                )
         integer_positive = {
             "max_steps": self.max_steps,
             "patience": self.patience,
         }
         for name, value in integer_positive.items():
             if value < 1:
-                raise ValueError(f"FitOptions.{name} must be at least 1, received {value}.")
+                raise ValueError(
+                    f"FitOptions.{name} must be at least 1, received {value}."
+                )
         if self.max_retries < 0:
             raise ValueError(
                 "FitOptions.max_retries must be non-negative, "
                 f"received {self.max_retries}."
             )
         if self.seed < 0:
-            raise ValueError(f"FitOptions.seed must be non-negative, received {self.seed}.")
+            raise ValueError(
+                f"FitOptions.seed must be non-negative, received {self.seed}."
+            )
         if self.retry_learning_rate_factor > 1:
             raise ValueError(
                 "FitOptions.retry_learning_rate_factor must not exceed 1, "
