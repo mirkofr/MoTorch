@@ -2,7 +2,7 @@
 
 MoTorch is an early-stage, low-level, modular, tensor-native optimization research library intended for PyTorch-based Bayesian optimization and scientific optimization research.
 
-> **Development status:** Pre-alpha. The repository contains tensor foundations, posterior abstractions, and the first exact Gaussian-process models. Samplers, acquisition functions, fitting orchestration, and candidate optimization are not implemented yet.
+> **Development status:** Pre-alpha. The repository contains tensor foundations, posterior abstractions, exact Gaussian-process models, and reusable model-fitting utilities. Samplers, acquisition functions, and candidate optimization are not implemented yet.
 
 ## Scope
 
@@ -31,9 +31,10 @@ The implemented foundation currently includes:
 - `PosteriorList` composition for independent output groups;
 - an abstract `Model` contract;
 - exact `SingleTaskGP` and `FixedNoiseGP` models;
-- `ModelList` composition for independent model groups.
+- `ModelList` composition for independent model groups;
+- typed exact-GP fitting configuration, diagnostics, retries, jitter policy, and deterministic test mode.
 
-Future, separately implemented and tested layers are expected to include fitting utilities, samplers, objectives, acquisition functions, and candidate optimization.
+Future, separately implemented and tested layers are expected to include samplers, objectives, acquisition functions, and candidate optimization.
 
 ## Installation from source
 
@@ -48,24 +49,24 @@ python -m pip install .
 ```python
 import torch
 
+from motorch.fit import FitOptions, fit_gp
 from motorch.models import SingleTaskGP
 
 train_X = torch.linspace(0.0, 1.0, 8, dtype=torch.double).unsqueeze(-1)
 train_Y = torch.sin(train_X * 6.0)
 model = SingleTaskGP(train_X, train_Y)
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.05)
-for _ in range(25):
-    optimizer.zero_grad()
-    loss = model.training_loss()
-    loss.backward()
-    optimizer.step()
+result = fit_gp(
+    model,
+    options=FitOptions(max_steps=100, deterministic=True, seed=0),
+)
 
 X = torch.tensor([[0.25], [0.75]], dtype=torch.double)
 posterior = model.posterior(X)
+print(result.converged, result.best_loss)
 ```
 
-See [the tensor conventions](docs/tensor_conventions.md), [posterior documentation](docs/posteriors.md), and [model documentation](docs/models.md) for the current public contracts.
+See [the tensor conventions](docs/tensor_conventions.md), [posterior documentation](docs/posteriors.md), [model documentation](docs/models.md), and [fitting documentation](docs/fitting.md) for the current public contracts.
 
 ## Development setup
 
