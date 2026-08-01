@@ -4,6 +4,10 @@ All notable changes to MoTorch will be documented in this file.
 
 ## Unreleased
 
+- Added the Phase 5 posterior sampler contract, IID normal sampler, and scrambled Sobol QMC normal sampler.
+- Added cached reproducible base samples with explicit seeds, reset behavior, dtype/device preservation, and differentiable posterior sampling.
+- Added sampler shape, reproducibility, statistical, gradient, validation, serialization, and conditional CUDA tests.
+- Added public posterior-sampling documentation.
 - Added typed exact-GP fitting configuration and structured convergence diagnostics.
 - Added Adam and L-BFGS marginal-likelihood fitting with best-state restoration.
 - Added bounded retry, learning-rate reduction, and Cholesky-jitter escalation behavior.
