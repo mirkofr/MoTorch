@@ -25,6 +25,8 @@ class PosteriorSampler(nn.Module, ABC):
     the configured seed.
     """
 
+    _base_samples: torch.Tensor
+
     def __init__(self, sample_shape: torch.Size, *, seed: int = 0) -> None:
         super().__init__()
         resolved_shape = torch.Size(sample_shape)
