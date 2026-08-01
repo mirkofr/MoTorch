@@ -106,7 +106,9 @@ def test_sampler_rebuilds_cache_for_shape_and_dtype_changes(
 def test_sampler_preserves_gradients_through_reparameterized_samples() -> None:
     mean = torch.tensor([[0.2], [0.7]], dtype=torch.double, requires_grad=True)
     raw_scale = torch.tensor(0.3, dtype=torch.double, requires_grad=True)
-    covariance = torch.eye(2, dtype=torch.double) * raw_scale.square()
+    covariance = torch.diag(
+        torch.stack((raw_scale.square(), (raw_scale + 0.4).square()))
+    )
     posterior = GaussianPosterior(mean, covariance)
     sampler = SobolQMCNormalSampler(torch.Size([64]), seed=13)
 
