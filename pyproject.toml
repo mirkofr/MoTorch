@@ -74,7 +74,7 @@ module = ["gpytorch", "gpytorch.*"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = ["motorch.models.gp"]
+module = ["motorch.fit.gp", "motorch.models.gp"]
 disallow_subclassing_any = false
 disallow_untyped_calls = false
 warn_return_any = false
