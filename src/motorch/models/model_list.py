@@ -31,7 +31,9 @@ class ModelList(Model):
     @property
     def num_outputs(self) -> int:
         """Return the sum of component output counts."""
-        return sum(self._model_at(index).num_outputs for index in range(len(self.models)))
+        return sum(
+            self._model_at(index).num_outputs for index in range(len(self.models))
+        )
 
     def posterior(
         self,
