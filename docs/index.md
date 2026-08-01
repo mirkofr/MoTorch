@@ -6,11 +6,11 @@ MoTorch aims to provide low-level, modular, tensor-native building blocks for Ba
 
 ## Status
 
-MoTorch is pre-alpha. Phase 1 provides shared tensor foundations, Phase 2 adds posterior abstractions, and Phase 3 introduces the first trainable exact Gaussian-process models. General fitting orchestration and optimization algorithms are not implemented yet.
+MoTorch is pre-alpha. Phase 1 provides shared tensor foundations, Phase 2 adds posterior abstractions, Phase 3 introduces trainable exact Gaussian-process models, and Phase 4 adds reliable model-fitting orchestration.
 
 ## Intended architecture
 
-The architecture separates models, posteriors, samplers, objectives, acquisition functions, and candidate optimization so that each mathematical layer can be tested and replaced independently.
+The architecture separates models, posteriors, fitting, samplers, objectives, acquisition functions, and candidate optimization so that each mathematical layer can be tested and replaced independently.
 
 ## Current capabilities
 
@@ -26,12 +26,17 @@ The architecture separates models, posteriors, samplers, objectives, acquisition
 - Exact single-task and fixed-noise Gaussian-process models.
 - Independent model-list composition.
 - Differentiable exact marginal-likelihood training objective.
+- Typed fitting configuration and structured convergence diagnostics.
+- Adam and L-BFGS fitting with state restoration, retries, and bounded jitter escalation.
+- Recoverable fitting and numerical warnings.
+- Deterministic fitting test mode that restores caller state.
 
 ## Current limitations
 
-- There are no fitting utility, sampler, objective, acquisition, or candidate-optimization APIs.
+- There are no sampler, objective, acquisition, or candidate-optimization APIs.
 - Exact GP training scales cubically with observation count.
 - Dense posterior covariance storage is not intended for large structured problems.
+- Joint `ModelList` fitting is not implemented.
 - CUDA behavior is not yet exercised by dedicated CI jobs.
 - Compatibility with other optimization libraries is not claimed.
 
@@ -40,7 +45,8 @@ The architecture separates models, posteriors, samplers, objectives, acquisition
 - [Tensor conventions](tensor_conventions.md)
 - [Posterior abstractions](posteriors.md)
 - [Model abstractions](models.md)
+- [Model fitting](fitting.md)
 
 ## Next planned work
 
-The next phase is reliable model-fitting orchestration, including optimizer configuration, convergence diagnostics, retry behavior, jitter handling, and fitting warnings.
+The next phase is posterior sampling, including IID normal sampling, Sobol quasi-Monte Carlo normal sampling, base-sample caching, reproducibility, statistical tests, and gradient verification.
