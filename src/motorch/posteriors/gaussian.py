@@ -2,7 +2,7 @@
 
 import torch
 
-from motorch.exceptions import ShapeError, TensorValidationError
+from motorch.exceptions import DTypeError, ShapeError, TensorValidationError
 from motorch.utils.validation import validate_same_dtype_device, validate_tensor
 
 
@@ -24,6 +24,8 @@ class GaussianPosterior:
     never casts, moves, clones, or detaches user tensors.
     """
 
+    _SUPPORTED_DTYPES = {torch.float32, torch.float64}
+
     def __init__(
         self,
         mean: torch.Tensor,
@@ -40,10 +42,21 @@ class GaussianPosterior:
             {"mean": mean, "covariance_matrix": covariance_matrix},
             module=module,
         )
+        if mean.dtype not in self._SUPPORTED_DTYPES:
+            raise DTypeError(
+                f"{module}: expected mean and covariance_matrix to use "
+                "torch.float32 or torch.float64, "
+                f"but received {mean.dtype}."
+            )
         if mean.ndim < 2:
             raise ShapeError(
                 f"{module}: expected mean to have shape batch_shape x q x m, "
                 f"but received {tuple(mean.shape)}."
+            )
+        if mean.shape[-2] < 1 or mean.shape[-1] < 1:
+            raise ShapeError(
+                f"{module}: expected q and m to be positive, "
+                f"but received mean shape {tuple(mean.shape)}."
             )
         event_size = mean.shape[-2] * mean.shape[-1]
         expected_covariance_shape = (*mean.shape[:-2], event_size, event_size)
@@ -139,7 +152,10 @@ class GaussianPosterior:
             -1,
         )
         root = self._covariance_root()
-        transformed = torch.matmul(root, flat_base_samples.unsqueeze(-1)).squeeze(-1)
+        transformed = torch.matmul(
+            root,
+            flat_base_samples.unsqueeze(-1),
+        ).squeeze(-1)
         flat_mean = self._mean.reshape(*self.batch_shape, -1)
         return (flat_mean + transformed).reshape(expected_shape)
 
@@ -162,22 +178,20 @@ class GaussianPosterior:
 
     def _covariance_root(self) -> torch.Tensor:
         eigenvalues, eigenvectors = torch.linalg.eigh(self._covariance_matrix)
-        tolerance = self._psd_tolerance(self._covariance_matrix)
         nonnegative_eigenvalues = eigenvalues.clamp_min(0.0)
-        nonnegative_eigenvalues = torch.where(
-            eigenvalues >= -tolerance,
-            nonnegative_eigenvalues,
-            eigenvalues,
-        )
         return eigenvectors * nonnegative_eigenvalues.sqrt().unsqueeze(-2)
 
     @staticmethod
     def _symmetry_rtol(dtype: torch.dtype) -> float:
-        return 1e-5 if dtype in {torch.float16, torch.bfloat16, torch.float32} else 1e-10
+        if dtype == torch.float32:
+            return 1e-5
+        return 1e-10
 
     @staticmethod
     def _symmetry_atol(dtype: torch.dtype) -> float:
-        return 1e-6 if dtype in {torch.float16, torch.bfloat16, torch.float32} else 1e-12
+        if dtype == torch.float32:
+            return 1e-6
+        return 1e-12
 
     @staticmethod
     def _psd_tolerance(matrix: torch.Tensor) -> torch.Tensor:
