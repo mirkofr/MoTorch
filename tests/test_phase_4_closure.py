@@ -26,7 +26,7 @@ class ImprovingThenFailingModel(nn.Module):
 
     def training_loss(self) -> torch.Tensor:
         self.calls += 1
-        if self.calls > 5:
+        if self.calls > 4:
             raise RuntimeError("failure after finite progress")
         return (self.value - 0.25).square()
 
@@ -67,7 +67,7 @@ def test_phase_4_failed_retry_restores_best_finite_state() -> None:
             model,
             options=FitOptions(
                 learning_rate=0.2,
-                max_steps=20,
+                max_steps=3,
                 max_retries=1,
             ),
         )
