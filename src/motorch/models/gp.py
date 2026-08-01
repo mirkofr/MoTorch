@@ -3,7 +3,6 @@
 from abc import abstractmethod
 from typing import cast
 
-import gpytorch
 import torch
 from gpytorch.distributions import MultivariateNormal
 from gpytorch.kernels import RBFKernel, ScaleKernel
