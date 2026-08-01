@@ -100,8 +100,12 @@ class PosteriorList:
                     f"{tuple(expected_shape)}, but received "
                     f"{tuple(base_samples.shape)}."
                 )
-            output_sizes = [posterior.mean.shape[-1] for posterior in self._posteriors]
-            component_base_samples = base_samples.split(output_sizes, dim=-1)
+            component_base_samples: list[torch.Tensor] = []
+            start = 0
+            for posterior in self._posteriors:
+                stop = start + posterior.mean.shape[-1]
+                component_base_samples.append(base_samples[..., start:stop])
+                start = stop
             samples = [
                 posterior.rsample(sample_shape, base_samples=component_base)
                 for posterior, component_base in zip(
