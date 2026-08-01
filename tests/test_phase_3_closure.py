@@ -109,7 +109,9 @@ def test_phase_3_cuda_smoke_when_available() -> None:
 
     train_X, train_Y = make_data()
     model = SingleTaskGP(train_X.cuda(), train_Y.cuda())
-    candidate_X = torch.tensor([[0.4]], dtype=torch.double, device="cuda", requires_grad=True)
+    candidate_X = torch.tensor(
+        [[0.4]], dtype=torch.double, device="cuda", requires_grad=True
+    )
 
     posterior = model.posterior(candidate_X)
     posterior.mean.sum().backward()
