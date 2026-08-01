@@ -80,9 +80,26 @@ def test_gaussian_posterior_supports_singular_covariance() -> None:
     assert torch.allclose(centered[..., 0, 0], centered[..., 1, 0])
 
 
+def test_gaussian_posterior_accepts_float32() -> None:
+    mean = torch.zeros(2, 1, dtype=torch.float32)
+    covariance = torch.eye(2, dtype=torch.float32)
+
+    posterior = GaussianPosterior(mean, covariance)
+
+    assert posterior.rsample(torch.Size([3])).dtype == torch.float32
+
+
 def test_gaussian_posterior_rejects_invalid_mean_rank() -> None:
     with pytest.raises(ShapeError, match=r"batch_shape x q x m.*\(3,\)"):
         GaussianPosterior(torch.zeros(3), torch.eye(3))
+
+
+def test_gaussian_posterior_rejects_zero_sized_event_dimensions() -> None:
+    with pytest.raises(ShapeError, match="q and m to be positive"):
+        GaussianPosterior(
+            torch.zeros(0, 1, dtype=torch.double),
+            torch.empty(0, 0, dtype=torch.double),
+        )
 
 
 def test_gaussian_posterior_rejects_covariance_shape_mismatch() -> None:
@@ -95,6 +112,13 @@ def test_gaussian_posterior_rejects_dtype_mismatch() -> None:
     mean = torch.zeros(2, 1, dtype=torch.float32)
     covariance = torch.eye(2, dtype=torch.float64)
     with pytest.raises(DTypeError, match="covariance_matrix.*torch.float32.*mean"):
+        GaussianPosterior(mean, covariance)
+
+
+def test_gaussian_posterior_rejects_unsupported_low_precision_dtype() -> None:
+    mean = torch.zeros(2, 1, dtype=torch.float16)
+    covariance = torch.eye(2, dtype=torch.float16)
+    with pytest.raises(DTypeError, match="torch.float32 or torch.float64"):
         GaussianPosterior(mean, covariance)
 
 
