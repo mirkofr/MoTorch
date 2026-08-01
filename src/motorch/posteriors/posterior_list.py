@@ -100,9 +100,7 @@ class PosteriorList:
                     f"{tuple(expected_shape)}, but received "
                     f"{tuple(base_samples.shape)}."
                 )
-            output_sizes = [
-                posterior.mean.shape[-1] for posterior in self._posteriors
-            ]
+            output_sizes = [posterior.mean.shape[-1] for posterior in self._posteriors]
             component_base_samples = base_samples.split(output_sizes, dim=-1)
             samples = [
                 posterior.rsample(sample_shape, base_samples=component_base)
