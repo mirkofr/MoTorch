@@ -31,7 +31,9 @@ class FittableExactGP(Protocol):
     def state_dict(self) -> dict[str, torch.Tensor]:
         """Return serializable model state."""
 
-    def load_state_dict(self, state_dict: dict[str, torch.Tensor], strict: bool = True) -> object:
+    def load_state_dict(
+        self, state_dict: dict[str, torch.Tensor], strict: bool = True
+    ) -> object:
         """Restore model state."""
 
     def train(self, mode: bool = True) -> object:
@@ -66,7 +68,9 @@ def _deterministic_context(enabled: bool, seed: int) -> Iterator[None]:
 
 
 def _trainable_parameters(model: FittableExactGP) -> list[nn.Parameter]:
-    parameters = [parameter for parameter in model.parameters() if parameter.requires_grad]
+    parameters = [
+        parameter for parameter in model.parameters() if parameter.requires_grad
+    ]
     if not parameters:
         raise ValueError("fit_gp: model has no trainable parameters.")
     return parameters
@@ -188,7 +192,11 @@ def _attempt_fit(
 
             if previous_loss is not None:
                 threshold = options.tolerance_loss * max(1.0, abs(previous_loss))
-                stable_steps = stable_steps + 1 if abs(previous_loss - loss_value) <= threshold else 0
+                stable_steps = (
+                    stable_steps + 1
+                    if abs(previous_loss - loss_value) <= threshold
+                    else 0
+                )
                 if stable_steps >= options.patience:
                     termination = FitTermination.LOSS_TOLERANCE
                     message = (
