@@ -1,29 +1,43 @@
 """Base contract for posterior samplers."""
 
 from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 import torch
 from torch import nn
 
-from motorch.posteriors import Posterior
+
+@runtime_checkable
+class SampleablePosterior(Protocol):
+    """Structural metadata required by generic posterior samplers."""
+
+    @property
+    def base_sample_shape(self) -> torch.Size:
+        """Return non-sample dimensions required by base samples."""
+        ...
+
+    @property
+    def dtype(self) -> torch.dtype:
+        """Return the posterior sample dtype."""
+        ...
+
+    @property
+    def device(self) -> torch.device:
+        """Return the posterior sample device."""
+        ...
+
+    def rsample(
+        self,
+        sample_shape: torch.Size = torch.Size(),
+        *,
+        base_samples: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        """Draw differentiable reparameterized samples."""
+        ...
 
 
 class PosteriorSampler(nn.Module, ABC):
-    """Generate cached base samples for differentiable posterior sampling.
-
-    Parameters
-    ----------
-    sample_shape:
-        Leading Monte Carlo sample dimensions. Every dimension must be positive.
-    seed:
-        Non-negative seed used by the sampler's local random-number generator.
-
-    Notes
-    -----
-    Base samples are cached and reused while posterior shape, dtype, and device
-    remain unchanged. Call :meth:`reset_base_samples` to regenerate them from
-    the configured seed.
-    """
+    """Generate cached base samples for differentiable posterior sampling."""
 
     _base_samples: torch.Tensor
 
@@ -41,11 +55,7 @@ class PosteriorSampler(nn.Module, ABC):
             )
         self.sample_shape = resolved_shape
         self.seed = seed
-        self.register_buffer(
-            "_base_samples",
-            torch.empty(0),
-            persistent=False,
-        )
+        self.register_buffer("_base_samples", torch.empty(0), persistent=False)
 
     @property
     def base_samples(self) -> torch.Tensor | None:
@@ -62,11 +72,11 @@ class PosteriorSampler(nn.Module, ABC):
             device=self._base_samples.device,
         )
 
-    def forward(self, posterior: Posterior) -> torch.Tensor:
+    def forward(self, posterior: SampleablePosterior) -> torch.Tensor:
         """Draw posterior samples using cached standard-normal base samples."""
-        if not isinstance(posterior, Posterior):
+        if not isinstance(posterior, SampleablePosterior):
             raise TypeError(
-                "PosteriorSampler.forward: posterior must provide mean, variance, "
+                "PosteriorSampler.forward: posterior must provide "
                 "base_sample_shape, dtype, device, and rsample()."
             )
         expected_shape = self.sample_shape + posterior.base_sample_shape
@@ -86,10 +96,7 @@ class PosteriorSampler(nn.Module, ABC):
                     f"{tuple(generated.shape)}, expected {tuple(expected_shape)}."
                 )
             self._base_samples = generated
-        return posterior.rsample(
-            self.sample_shape,
-            base_samples=self._base_samples,
-        )
+        return posterior.rsample(self.sample_shape, base_samples=self._base_samples)
 
     def _requires_new_base_samples(
         self,
