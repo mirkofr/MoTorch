@@ -1,6 +1,7 @@
 """Sobol quasi-Monte Carlo standard-normal posterior sampler."""
 
 import math
+from typing import cast
 
 import torch
 
@@ -24,13 +25,13 @@ class SobolQMCNormalSampler(PosteriorSampler):
     ) -> torch.Tensor:
         sample_count = math.prod(self.sample_shape) if self.sample_shape else 1
         dimension = math.prod(shape[len(self.sample_shape) :])
-        engine = torch.quasirandom.SobolEngine(
+        engine = torch.quasirandom.SobolEngine(  # type: ignore[no-untyped-call]
             dimension=dimension,
             scramble=True,
             seed=self.seed,
         )
-        uniforms = engine.draw(sample_count, dtype=dtype)
+        uniforms = cast(torch.Tensor, engine.draw(sample_count, dtype=dtype))
         epsilon = torch.finfo(dtype).eps
         uniforms = uniforms.clamp(min=epsilon, max=1.0 - epsilon)
         normals = torch.special.ndtri(uniforms)
-        return normals.reshape(shape).to(device=device)
+        return cast(torch.Tensor, normals.reshape(shape).to(device=device))
