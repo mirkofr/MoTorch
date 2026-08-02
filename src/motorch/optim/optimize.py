@@ -1,8 +1,8 @@
 """Bounded multistart acquisition-function optimization."""
 
+import warnings
 from collections.abc import Mapping
 from typing import Protocol, cast
-import warnings
 
 import torch
 
@@ -109,6 +109,7 @@ def _optimize_restart(
             else:
                 closure()
                 optimizer.step()
+
             with torch.no_grad():
                 candidate = _from_unconstrained(
                     parameter, lower, upper, fixed_features
@@ -119,6 +120,7 @@ def _optimize_restart(
                 if best_value is None or bool(value > best_value):
                     best_value = value.detach().clone()
                     best_candidate = candidate.detach().clone()
+
                 current_best = float(best_value)
                 improvement = (
                     float("inf")
@@ -206,13 +208,14 @@ def _optimize_joint(
     for result in results:
         if not result.success:
             warnings.warn(
-                f"Acquisition optimization restart {result.index} failed: {result.message}.",
+                f"Acquisition optimization restart {result.index} failed: "
+                f"{result.message}.",
                 OptimizationWarning,
                 stacklevel=2,
             )
     if not successful:
         raise RuntimeError("optimize_acqf: every local optimization restart failed.")
-    best = max(successful, key=lambda result: float(cast(torch.Tensor, result.value)))
+    best = max(successful, key=lambda item: float(cast(torch.Tensor, item.value)))
     return OptimizationResult(
         candidates=cast(torch.Tensor, best.candidate),
         values=cast(torch.Tensor, best.value),
