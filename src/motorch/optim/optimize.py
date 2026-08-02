@@ -92,9 +92,7 @@ def _optimize_restart(
 
             def closure() -> torch.Tensor:
                 optimizer.zero_grad(set_to_none=True)
-                candidate = _from_unconstrained(
-                    parameter, lower, upper, fixed_features
-                )
+                candidate = _from_unconstrained(parameter, lower, upper, fixed_features)
                 value = _evaluate_scalar(acq_function, candidate)
                 if not torch.isfinite(value):
                     raise FloatingPointError("acquisition value became non-finite")
@@ -111,9 +109,7 @@ def _optimize_restart(
                 optimizer.step()
 
             with torch.no_grad():
-                candidate = _from_unconstrained(
-                    parameter, lower, upper, fixed_features
-                )
+                candidate = _from_unconstrained(parameter, lower, upper, fixed_features)
                 value = _evaluate_scalar(acq_function, candidate)
                 if not torch.isfinite(value):
                     raise FloatingPointError("acquisition value became non-finite")
@@ -185,9 +181,7 @@ def _optimize_joint(
     resolved_fixed = validate_fixed_features(fixed_features, bounds=bounds)
     raw = generate_raw_candidates(bounds, q=q, raw_samples=raw_samples, seed=seed)
     raw = apply_fixed_features(raw, resolved_fixed)
-    starts, _ = select_restart_candidates(
-        acq_function, raw, num_restarts=num_restarts
-    )
+    starts, _ = select_restart_candidates(acq_function, raw, num_restarts=num_restarts)
     results = tuple(
         _optimize_restart(
             acq_function,
