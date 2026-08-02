@@ -2,7 +2,7 @@
 
 MoTorch is an early-stage, low-level, modular, tensor-native optimization research library intended for PyTorch-based Bayesian optimization and scientific optimization research.
 
-> **Development status:** Pre-alpha. The repository contains tensor foundations, posterior abstractions, exact Gaussian-process models, and reusable model-fitting utilities. Samplers, acquisition functions, and candidate optimization are not implemented yet.
+> **Development status:** Pre-alpha. The repository contains tensor foundations, posterior abstractions, exact Gaussian-process models, reusable model-fitting utilities, and differentiable IID and Sobol QMC posterior samplers. Acquisition functions and candidate optimization are not implemented yet.
 
 ## Scope
 
@@ -32,9 +32,10 @@ The implemented foundation currently includes:
 - an abstract `Model` contract;
 - exact `SingleTaskGP` and `FixedNoiseGP` models;
 - `ModelList` composition for independent model groups;
-- typed exact-GP fitting configuration, diagnostics, retries, jitter policy, and deterministic test mode.
+- typed exact-GP fitting configuration, diagnostics, retries, jitter policy, and deterministic test mode;
+- cached IID and scrambled Sobol QMC normal posterior samplers.
 
-Future, separately implemented and tested layers are expected to include samplers, objectives, acquisition functions, and candidate optimization.
+Future, separately implemented and tested layers are expected to include objectives, acquisition functions, and candidate optimization.
 
 ## Installation from source
 
@@ -51,6 +52,7 @@ import torch
 
 from motorch.fit import FitOptions, fit_gp
 from motorch.models import SingleTaskGP
+from motorch.sampling import SobolQMCNormalSampler
 
 train_X = torch.linspace(0.0, 1.0, 8, dtype=torch.double).unsqueeze(-1)
 train_Y = torch.sin(train_X * 6.0)
@@ -63,10 +65,12 @@ result = fit_gp(
 
 X = torch.tensor([[0.25], [0.75]], dtype=torch.double)
 posterior = model.posterior(X)
-print(result.converged, result.best_loss)
+sampler = SobolQMCNormalSampler(torch.Size([256]), seed=0)
+samples = sampler(posterior)
+print(result.converged, samples.shape)
 ```
 
-See [the tensor conventions](docs/tensor_conventions.md), [posterior documentation](docs/posteriors.md), [model documentation](docs/models.md), and [fitting documentation](docs/fitting.md) for the current public contracts.
+See [the tensor conventions](docs/tensor_conventions.md), [posterior documentation](docs/posteriors.md), [model documentation](docs/models.md), [fitting documentation](docs/fitting.md), and [sampling documentation](docs/sampling.md) for the current public contracts.
 
 ## Development setup
 
