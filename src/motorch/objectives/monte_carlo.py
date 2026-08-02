@@ -15,7 +15,9 @@ class IdentityMCObjective(MCAcquisitionObjective):
     ) -> torch.Tensor:
         del X
         if not isinstance(samples, torch.Tensor):
-            raise TypeError("IdentityMCObjective.forward: samples must be a torch.Tensor.")
+            raise TypeError(
+                "IdentityMCObjective.forward: samples must be a torch.Tensor."
+            )
         if samples.ndim < 2:
             raise ValueError(
                 "IdentityMCObjective.forward: samples must have shape "
