@@ -1,3 +1,5 @@
+"""Independent Phase 6 acceptance and integration tests."""
+
 import pytest
 import torch
 
