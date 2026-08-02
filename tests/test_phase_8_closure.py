@@ -90,7 +90,9 @@ def test_qei_candidate_gradient_matches_central_finite_difference() -> None:
     minus[0, 0, 0] -= step
     finite_difference = (acquisition(plus) - acquisition(minus)) / (2.0 * step)
 
-    torch.testing.assert_close(analytic, finite_difference.squeeze(), rtol=2e-3, atol=2e-3)
+    torch.testing.assert_close(
+        analytic, finite_difference.squeeze(), rtol=2e-3, atol=2e-3
+    )
 
 
 def test_pending_points_resize_sampler_cache_and_clear_cleanly() -> None:
@@ -106,11 +108,15 @@ def test_pending_points_resize_sampler_cache_and_clear_cleanly() -> None:
 
     acquisition.set_pending_points(pending)
     pending_value = acquisition(X)
-    pending_base_shape = sampler.base_samples.shape if sampler.base_samples is not None else None
+    pending_base_shape = (
+        sampler.base_samples.shape if sampler.base_samples is not None else None
+    )
 
     acquisition.set_pending_points(None)
     clear_value = acquisition(X)
-    clear_base_shape = sampler.base_samples.shape if sampler.base_samples is not None else None
+    clear_base_shape = (
+        sampler.base_samples.shape if sampler.base_samples is not None else None
+    )
 
     assert pending_base_shape == torch.Size([32, 1, 3, 2])
     assert clear_base_shape == torch.Size([32, 1, 1, 2])
@@ -156,9 +162,7 @@ def test_mc_runtime_caches_are_not_serialized() -> None:
         sampler=IIDNormalSampler(torch.Size([16]), seed=3),
         objective=WeightedObjective(),
     )
-    acquisition.set_pending_points(
-        torch.tensor([[[0.1, 0.2]]], dtype=torch.double)
-    )
+    acquisition.set_pending_points(torch.tensor([[[0.1, 0.2]]], dtype=torch.double))
     acquisition(torch.tensor([[[0.3, 0.4]]], dtype=torch.double))
 
     keys = set(acquisition.state_dict())
