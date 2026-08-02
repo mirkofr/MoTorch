@@ -252,7 +252,10 @@ class qConstrainedExpectedImprovement(qExpectedImprovement):
                     f"{index} must return shape {tuple(values.shape)}, received "
                     f"{tuple(constraint_values.shape)}."
                 )
-            if constraint_values.dtype != values.dtype or constraint_values.device != values.device:
+            if (
+                constraint_values.dtype != values.dtype
+                or constraint_values.device != values.device
+            ):
                 raise ValueError(
                     "qConstrainedExpectedImprovement: constraint outputs must share "
                     "sampled-objective dtype and device."
