@@ -6,7 +6,7 @@ MoTorch aims to provide low-level, modular, tensor-native building blocks for Ba
 
 ## Status
 
-MoTorch is pre-alpha. Phase 1 provides shared tensor foundations, Phase 2 adds posterior abstractions, Phase 3 introduces trainable exact Gaussian-process models, Phase 4 adds reliable model-fitting orchestration, Phase 5 adds differentiable posterior samplers, Phase 6 adds closed-form analytic acquisition functions, and Phase 7 adds bounded acquisition optimization.
+MoTorch is pre-alpha. Phases 1–7 provide tensor foundations, posterior and model abstractions, model fitting, posterior samplers, analytic acquisitions, and bounded acquisition optimization. Phase 8 adds sampled objectives and differentiable Monte Carlo acquisition functions.
 
 ## Intended architecture
 
@@ -16,38 +16,26 @@ The architecture separates models, posteriors, fitting, samplers, objectives, ac
 
 - Typed exception and warning hierarchies.
 - Shape, dtype, device, and finite-value validation.
-- Explicit seeded `torch.Generator` creation.
-- Central tensor-shape and autograd conventions.
-- Runtime-checkable posterior protocol.
-- Dense batched Gaussian posterior with full covariance support.
-- Differentiable reparameterized sampling with deterministic base samples.
-- Posterior-list composition for independent output groups.
-- Abstract PyTorch model contract.
+- Explicit seeded randomness and reusable posterior base samples.
+- Dense batched Gaussian posteriors and posterior-list composition.
 - Exact single-task and fixed-noise Gaussian-process models.
-- Independent model-list composition.
-- Differentiable exact marginal-likelihood training objective.
-- Typed fitting configuration and structured convergence diagnostics.
-- Adam and L-BFGS fitting with state restoration, retries, and bounded jitter escalation.
-- Recoverable fitting and numerical warnings.
-- Deterministic fitting test mode that restores caller state.
-- Stateful posterior sampler contract with reusable cached base samples.
-- IID standard-normal posterior sampling with local seeded generators.
-- Scrambled Sobol QMC normal posterior sampling.
+- Typed model fitting with diagnostics, retries, and jitter handling.
+- IID and scrambled Sobol QMC normal posterior sampling.
 - Analytic posterior mean, probability of improvement, expected improvement, and upper confidence bound.
-- Sobol raw candidate generation and finite restart selection.
-- Bounded multistart Adam and L-BFGS acquisition optimization.
+- Sobol-initialized bounded multistart acquisition optimization.
 - Fixed-feature, failed-restart, joint-batch, and pending-aware sequential interfaces.
+- Sampled Monte Carlo objective contract and single-output identity objective.
+- Joint `qExpectedImprovement` with explicit maximization or minimization direction.
+- Pending-point handling and smoothly constrained Monte Carlo expected improvement.
 
 ## Current limitations
 
-- There are no objective APIs.
-- Analytic acquisition functions currently require `q=1` and one posterior output.
+- The default Monte Carlo objective supports one posterior output.
 - Acquisition optimization currently supports box bounds and fixed features only.
-- Sequential `q > 1` optimization requires acquisition pending-point support.
+- Candidate-space linear and nonlinear constraints are reserved for Phase 9.
 - Exact GP training scales cubically with observation count.
 - Dense posterior covariance storage is not intended for large structured problems.
 - Joint `ModelList` fitting is not implemented.
-- Antithetic and specialized batch-collapsing samplers are not implemented.
 - CUDA behavior is not yet exercised by dedicated CI jobs.
 - Compatibility with other optimization libraries is not claimed.
 
@@ -60,7 +48,8 @@ The architecture separates models, posteriors, fitting, samplers, objectives, ac
 - [Posterior sampling](sampling.md)
 - [Analytic acquisition functions](acquisition.md)
 - [Acquisition optimization](optimization.md)
+- [Monte Carlo acquisition functions](monte_carlo_acquisition.md)
 
 ## Next planned work
 
-The next phase is Monte Carlo acquisition functions, including a Monte Carlo acquisition base, `qExpectedImprovement`, sampled objectives, baseline and pending-point handling, and constrained Monte Carlo improvement.
+The next phase is reusable input and outcome transforms plus candidate-space constraints, including normalization, standardization, chaining, inverse transforms, linear constraints, nonlinear hooks, and feasibility utilities.
