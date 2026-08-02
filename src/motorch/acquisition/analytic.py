@@ -73,6 +73,8 @@ class PosteriorMean(AcquisitionFunction):
 class ProbabilityOfImprovement(AcquisitionFunction):
     """Closed-form probability of improvement for a Gaussian posterior."""
 
+    best_f: torch.Tensor
+
     def __init__(
         self,
         model: Model,
@@ -83,7 +85,9 @@ class ProbabilityOfImprovement(AcquisitionFunction):
         super().__init__(model)
         best = torch.as_tensor(best_f)
         if best.numel() != 1 or not torch.isfinite(best).all():
-            raise ValueError("ProbabilityOfImprovement: best_f must be one finite scalar.")
+            raise ValueError(
+                "ProbabilityOfImprovement: best_f must be one finite scalar."
+            )
         self.register_buffer("best_f", best.reshape(()))
         self.maximize = maximize
 
@@ -101,6 +105,8 @@ class ProbabilityOfImprovement(AcquisitionFunction):
 
 class ExpectedImprovement(AcquisitionFunction):
     """Closed-form expected improvement for a Gaussian posterior."""
+
+    best_f: torch.Tensor
 
     def __init__(
         self,
@@ -133,6 +139,8 @@ class ExpectedImprovement(AcquisitionFunction):
 class UpperConfidenceBound(AcquisitionFunction):
     """Gaussian upper confidence bound with non-negative exploration weight."""
 
+    beta: torch.Tensor
+
     def __init__(
         self,
         model: Model,
@@ -147,7 +155,9 @@ class UpperConfidenceBound(AcquisitionFunction):
             or not torch.isfinite(resolved_beta).all()
             or bool((resolved_beta < 0).any())
         ):
-            raise ValueError("UpperConfidenceBound: beta must be one finite non-negative scalar.")
+            raise ValueError(
+                "UpperConfidenceBound: beta must be one finite non-negative scalar."
+            )
         self.register_buffer("beta", resolved_beta.reshape(()))
         self.maximize = maximize
 
