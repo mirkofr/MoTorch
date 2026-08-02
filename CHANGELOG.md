@@ -4,6 +4,9 @@ All notable changes to MoTorch will be documented in this file.
 
 ## Unreleased
 
+- Added the Phase 8 sampled Monte Carlo objective contract and single-output identity objective.
+- Added joint `qExpectedImprovement`, explicit minimization direction, pending-point handling, and smoothly constrained Monte Carlo expected improvement.
+- Added independent reference, shape, gradient, objective, pending-point, constraint, validation, and optimization-regret tests plus public Monte Carlo acquisition documentation.
 - Added Phase 7 Sobol raw candidate generation, finite restart selection, bounded multistart local optimization, fixed-feature handling, and structured restart diagnostics.
 - Added joint batch and pending-aware sequential acquisition-optimization interfaces with deterministic seeded initialization and failed-restart warnings.
 - Added reference maximum, bounds, fixed-feature, reproducibility, and validation tests plus public acquisition-optimization documentation.
