@@ -4,6 +4,9 @@ All notable changes to MoTorch will be documented in this file.
 
 ## Unreleased
 
+- Added the Phase 6 analytic acquisition-function contract, posterior mean, probability of improvement, expected improvement, and upper confidence bound.
+- Added independent formula, shape, dtype, gradient, minimization, and validation tests for analytic acquisitions.
+- Added public analytic-acquisition documentation.
 - Added the Phase 5 posterior sampler contract, IID normal sampler, and scrambled Sobol QMC normal sampler.
 - Added cached reproducible base samples with explicit seeds, reset behavior, dtype/device preservation, and differentiable posterior sampling.
 - Added sampler shape, reproducibility, statistical, gradient, validation, serialization, and conditional CUDA tests.
