@@ -2,7 +2,10 @@
 
 from motorch.optim.config import OptimizeAcqfOptions
 from motorch.optim.diagnostics import OptimizationResult, RestartResult
-from motorch.optim.initializers import generate_raw_candidates, select_restart_candidates
+from motorch.optim.initializers import (
+    generate_raw_candidates,
+    select_restart_candidates,
+)
 from motorch.optim.optimize import optimize_acqf
 
 __all__ = [
