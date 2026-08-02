@@ -1,7 +1,7 @@
 """Raw candidate generation and restart selection."""
 
-from collections.abc import Mapping
 import warnings
+from collections.abc import Mapping
 
 import torch
 
