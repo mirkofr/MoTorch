@@ -49,7 +49,9 @@ def test_analytic_values_match_independent_formulas() -> None:
     z = (mean - best_f) / sigma
 
     torch.testing.assert_close(PosteriorMean(model)(X), mean)
-    torch.testing.assert_close(ProbabilityOfImprovement(model, best_f)(X), _normal_cdf(z))
+    torch.testing.assert_close(
+        ProbabilityOfImprovement(model, best_f)(X), _normal_cdf(z)
+    )
     torch.testing.assert_close(
         ExpectedImprovement(model, best_f)(X),
         (mean - best_f) * _normal_cdf(z) + sigma * _normal_pdf(z),
@@ -82,9 +84,17 @@ def test_minimization_convention_negates_mean_and_reverses_improvement() -> None
     model = AffineGaussianModel()
     X = torch.tensor([[[0.2, 0.3]]], dtype=torch.double)
 
-    torch.testing.assert_close(PosteriorMean(model, maximize=False)(X), torch.tensor([-0.5], dtype=torch.double))
-    assert ExpectedImprovement(model, best_f=0.0, maximize=False)(X).item() < ExpectedImprovement(model, best_f=0.0)(X).item()
-    assert UpperConfidenceBound(model, beta=0.0, maximize=False)(X).item() == pytest.approx(-0.5)
+    torch.testing.assert_close(
+        PosteriorMean(model, maximize=False)(X),
+        torch.tensor([-0.5], dtype=torch.double),
+    )
+    assert (
+        ExpectedImprovement(model, best_f=0.0, maximize=False)(X).item()
+        < ExpectedImprovement(model, best_f=0.0)(X).item()
+    )
+    assert UpperConfidenceBound(model, beta=0.0, maximize=False)(
+        X
+    ).item() == pytest.approx(-0.5)
 
 
 @pytest.mark.parametrize(
@@ -105,7 +115,9 @@ def test_analytic_acquisitions_reject_q_greater_than_one(factory: object) -> Non
         acquisition(X)
 
 
-@pytest.mark.parametrize("value", [float("nan"), float("inf"), torch.tensor([1.0, 2.0])])
+@pytest.mark.parametrize(
+    "value", [float("nan"), float("inf"), torch.tensor([1.0, 2.0])]
+)
 def test_improvement_acquisitions_reject_invalid_best_f(value: object) -> None:
     model = AffineGaussianModel()
 
