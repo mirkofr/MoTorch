@@ -47,7 +47,7 @@ def _evaluate_scalar(
     acq_function: AcquisitionFunction,
     candidate: torch.Tensor,
 ) -> torch.Tensor:
-    value = acq_function(candidate.unsqueeze(0))
+    value = cast(torch.Tensor, acq_function(candidate.unsqueeze(0)))
     if value.numel() != 1:
         raise ValueError(
             "optimize_acqf: local restart evaluation must return one scalar value; "
@@ -97,13 +97,13 @@ def _optimize_restart(
                 if not torch.isfinite(value):
                     raise FloatingPointError("acquisition value became non-finite")
                 loss = -value
-                loss.backward()
+                loss.backward()  # type: ignore[no-untyped-call]
                 if parameter.grad is None or not torch.isfinite(parameter.grad).all():
                     raise FloatingPointError("candidate gradient became non-finite")
                 return loss
 
             if isinstance(optimizer, torch.optim.LBFGS):
-                optimizer.step(closure)
+                optimizer.step(closure)  # type: ignore[no-untyped-call]
             else:
                 closure()
                 optimizer.step()
