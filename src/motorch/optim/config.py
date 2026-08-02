@@ -31,9 +31,7 @@ class OptimizeAcqfOptions:
                 "OptimizeAcqfOptions.gradient_tolerance must be non-negative."
             )
         if self.lbfgs_history_size < 1:
-            raise ValueError(
-                "OptimizeAcqfOptions.lbfgs_history_size must be positive."
-            )
+            raise ValueError("OptimizeAcqfOptions.lbfgs_history_size must be positive.")
         if not 0 < self.clamp_epsilon < 0.5:
             raise ValueError(
                 "OptimizeAcqfOptions.clamp_epsilon must lie strictly between 0 and 0.5."
