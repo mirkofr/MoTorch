@@ -4,6 +4,9 @@ All notable changes to MoTorch will be documented in this file.
 
 ## Unreleased
 
+- Added Phase 7 Sobol raw candidate generation, finite restart selection, bounded multistart local optimization, fixed-feature handling, and structured restart diagnostics.
+- Added joint batch and pending-aware sequential acquisition-optimization interfaces with deterministic seeded initialization and failed-restart warnings.
+- Added reference maximum, bounds, fixed-feature, reproducibility, and validation tests plus public acquisition-optimization documentation.
 - Added the Phase 6 analytic acquisition-function contract, posterior mean, probability of improvement, expected improvement, and upper confidence bound.
 - Added independent formula, shape, dtype, gradient, minimization, and validation tests for analytic acquisitions.
 - Added public analytic-acquisition documentation.
