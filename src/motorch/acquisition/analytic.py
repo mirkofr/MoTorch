@@ -73,6 +73,8 @@ class PosteriorMean(AcquisitionFunction):
 class ProbabilityOfImprovement(AcquisitionFunction):
     """Closed-form probability of improvement for a Gaussian posterior."""
 
+    best_f: torch.Tensor
+
     def __init__(
         self,
         model: Model,
@@ -104,6 +106,8 @@ class ProbabilityOfImprovement(AcquisitionFunction):
 class ExpectedImprovement(AcquisitionFunction):
     """Closed-form expected improvement for a Gaussian posterior."""
 
+    best_f: torch.Tensor
+
     def __init__(
         self,
         model: Model,
@@ -134,6 +138,8 @@ class ExpectedImprovement(AcquisitionFunction):
 
 class UpperConfidenceBound(AcquisitionFunction):
     """Gaussian upper confidence bound with non-negative exploration weight."""
+
+    beta: torch.Tensor
 
     def __init__(
         self,
