@@ -6,7 +6,7 @@ MoTorch aims to provide low-level, modular, tensor-native building blocks for Ba
 
 ## Status
 
-MoTorch is pre-alpha. Phase 1 provides shared tensor foundations, Phase 2 adds posterior abstractions, Phase 3 introduces trainable exact Gaussian-process models, Phase 4 adds reliable model-fitting orchestration, Phase 5 adds differentiable posterior samplers, and Phase 6 adds closed-form analytic acquisition functions.
+MoTorch is pre-alpha. Phase 1 provides shared tensor foundations, Phase 2 adds posterior abstractions, Phase 3 introduces trainable exact Gaussian-process models, Phase 4 adds reliable model-fitting orchestration, Phase 5 adds differentiable posterior samplers, Phase 6 adds closed-form analytic acquisition functions, and Phase 7 adds bounded acquisition optimization.
 
 ## Intended architecture
 
@@ -34,11 +34,16 @@ The architecture separates models, posteriors, fitting, samplers, objectives, ac
 - IID standard-normal posterior sampling with local seeded generators.
 - Scrambled Sobol QMC normal posterior sampling.
 - Analytic posterior mean, probability of improvement, expected improvement, and upper confidence bound.
+- Sobol raw candidate generation and finite restart selection.
+- Bounded multistart Adam and L-BFGS acquisition optimization.
+- Fixed-feature, failed-restart, joint-batch, and pending-aware sequential interfaces.
 
 ## Current limitations
 
-- There are no objective or candidate-optimization APIs.
+- There are no objective APIs.
 - Analytic acquisition functions currently require `q=1` and one posterior output.
+- Acquisition optimization currently supports box bounds and fixed features only.
+- Sequential `q > 1` optimization requires acquisition pending-point support.
 - Exact GP training scales cubically with observation count.
 - Dense posterior covariance storage is not intended for large structured problems.
 - Joint `ModelList` fitting is not implemented.
@@ -54,7 +59,8 @@ The architecture separates models, posteriors, fitting, samplers, objectives, ac
 - [Model fitting](fitting.md)
 - [Posterior sampling](sampling.md)
 - [Analytic acquisition functions](acquisition.md)
+- [Acquisition optimization](optimization.md)
 
 ## Next planned work
 
-The next phase is acquisition optimization under box constraints, including Sobol initialization, restart selection, gradient-based local optimization, fixed features, failed-restart handling, and sequential and joint interfaces.
+The next phase is Monte Carlo acquisition functions, including a Monte Carlo acquisition base, `qExpectedImprovement`, sampled objectives, baseline and pending-point handling, and constrained Monte Carlo improvement.
