@@ -83,7 +83,9 @@ class ProbabilityOfImprovement(AcquisitionFunction):
         super().__init__(model)
         best = torch.as_tensor(best_f)
         if best.numel() != 1 or not torch.isfinite(best).all():
-            raise ValueError("ProbabilityOfImprovement: best_f must be one finite scalar.")
+            raise ValueError(
+                "ProbabilityOfImprovement: best_f must be one finite scalar."
+            )
         self.register_buffer("best_f", best.reshape(()))
         self.maximize = maximize
 
@@ -147,7 +149,9 @@ class UpperConfidenceBound(AcquisitionFunction):
             or not torch.isfinite(resolved_beta).all()
             or bool((resolved_beta < 0).any())
         ):
-            raise ValueError("UpperConfidenceBound: beta must be one finite non-negative scalar.")
+            raise ValueError(
+                "UpperConfidenceBound: beta must be one finite non-negative scalar."
+            )
         self.register_buffer("beta", resolved_beta.reshape(()))
         self.maximize = maximize
 
