@@ -125,7 +125,12 @@ def test_phase_7_sequential_generation_updates_and_clears_pending_points() -> No
     assert candidates.shape == torch.Size([3, 1])
     assert values.shape == torch.Size([3])
     assert candidates[0, 0].item() == pytest.approx(0.25, abs=4e-3)
-    assert torch.allclose(candidates[1:, 0], torch.full((2,), 0.75, dtype=torch.double), atol=4e-3, rtol=0)
+    assert torch.allclose(
+        candidates[1:, 0],
+        torch.full((2,), 0.75, dtype=torch.double),
+        atol=4e-3,
+        rtol=0,
+    )
     assert acquisition.pending_points is None
 
 
